@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 public class AsistenciaService {
+
+    private static final ZoneId ZONA_PERU = ZoneId.of("America/Lima");
 
     private final AsistenciaRepository asistenciaRepository;
     private final UsuarioRepository usuarioRepository;
@@ -27,7 +30,7 @@ public class AsistenciaService {
     }
 
     public Asistencia marcarEntrada(Long usuarioId, String metodo) {
-        LocalDate hoy = LocalDate.now();
+        LocalDate hoy = LocalDate.now(ZONA_PERU);
         return asistenciaRepository.findByUsuarioIdAndFecha(usuarioId, hoy)
                 .orElseGet(() -> {
                     Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -35,18 +38,18 @@ public class AsistenciaService {
                     Asistencia nueva = new Asistencia();
                     nueva.setUsuario(usuario);
                     nueva.setFecha(hoy);
-                    nueva.setHoraEntrada(LocalTime.now());
+                    nueva.setHoraEntrada(LocalTime.now(ZONA_PERU));
                     nueva.setMetodo(metodo);
                     return asistenciaRepository.save(nueva);
                 });
     }
 
     public Asistencia marcarSalida(Long usuarioId) {
-        LocalDate hoy = LocalDate.now();
+        LocalDate hoy = LocalDate.now(ZONA_PERU);
         Asistencia registro = asistenciaRepository.findByUsuarioIdAndFecha(usuarioId, hoy)
                 .orElseThrow(() -> new NoSuchElementException("Aún no marcaste tu entrada hoy."));
         if (registro.getHoraSalida() == null) {
-            registro.setHoraSalida(LocalTime.now());
+            registro.setHoraSalida(LocalTime.now(ZONA_PERU));
             asistenciaRepository.save(registro);
         }
         return registro;

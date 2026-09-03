@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Lista separada por comas de origenes permitidos para CORS."
+    },
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Clave secreta utilizada para firmar los tokens JWT."
+    }
+  ]
+}
